@@ -33,13 +33,13 @@ class SFT:
 
         trainer = SFTTrainer(
             model=model, 
-            train_dataset=dataset[:int(len(dataset) * self.proportion)], 
-            eval_dataset=dataset[int(len(dataset) * self.proportion): int(len(dataset) * (self.proportion + 0.2))],
+            train_dataset=dataset.select(range(int(len(dataset) * self.proportion))),
+            eval_dataset=dataset.select(range(int(len(dataset) * self.proportion), int(len(dataset) * (self.proportion + 0.2)))),
             peft_config=lora_config,
             tokenizer=tokenizer,
             max_seq_length=self.config["max_seq_length"],
             args=training_args,
-            dataset_text_field="text"
+            dataset_text_field="text",
         )
 
         try:
