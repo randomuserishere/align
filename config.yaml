@@ -1,0 +1,36 @@
+device: str = "cuda"
+train_seed: int = 1
+model_name: str = "IlyaGusev/saiga_llama3_8b"
+tokenizer_name: str = "IlyaGusev/saiga_llama3_8b"
+peft_config:
+  target_modules:
+    - "q_proj"
+    - "k_proj"
+    - "v_proj"
+    - "o_proj"
+    - "gate_proj"
+  lora_dropout: float = 0.5
+  alpha: int = 16
+  r: int = 16
+dpo:
+  learning_rate: float = 5e-5
+  batch_size: int = 4
+  grad_accum: int = 4
+  warmup_steps: int = 50
+  epochs: int = 1
+  scheduler: str = "cosine"
+  optim: str = "adam"
+  max_seq_length: int = 1024
+  max_prompt_length: int = 1024
+output_dir: str = "."
+sft:
+  learning_rate: float = 5e-5
+  batch_size: int = 4
+  grad_accum: int = 4
+  warmup_steps: int = 30
+  weight_decay: float = 0.001
+  epochs: int = 1
+  scheduler: str = "cosine"
+  optim: str = "adam"
+  max_seq_length: int = 1024
+iteration: int = 3
