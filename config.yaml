@@ -35,3 +35,5 @@ sft:
   optim: "adamw_torch"
   max_seq_length: 1024
 iteration: 3
+new_prompts_num: 500
+num_responses: 4
