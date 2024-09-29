@@ -52,10 +52,10 @@ class ModelLoader:
         try:
             lora_config = LoraConfig(
                 r = self.peft_config["r"], 
-                alpha = self.peft_config["alpha"],
+                lora_alpha = self.peft_config["alpha"],
                 target_modules = self.peft_config["target_modules"],
                 lora_dropout = self.peft_config["lora_dropout"],
-                task_type = "CAUSAL_LM"
+                task_type = "CAUSAL_LM",
             )
 
             self.model = prepare_model_for_kbit_training(self.model)
