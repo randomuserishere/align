@@ -17,7 +17,7 @@ def chat_template(tokenizer: Any, x: Dict[str, str]) -> Dataset:
     except RuntimeError:
         raise ValueError("Wrong chat template function")
 
-def load_oasst_data(config: Dict[str], tokenizer: Any) -> List[Dict[str, str]]:
+def load_oasst_data(config: Dict[str, Any], tokenizer: Any) -> List[Dict[str, Any]]:
     oasst_dataset = load_dataset(config["data_name"], num_proc=os.cpu_count())["train"].shuffle(seed=config["train_seed"])
     oasst_dataset = oasst_dataset.filter(lambda x: x["lang"] == "ru")
 

@@ -2,7 +2,7 @@ from typing import Dict, List, Any
 from transformers import PreTrainedModel, PreTrainedTokenizer, TextStreamer
 
 import re
-from self_reward.utils.prompts import JUDGE_PROMPT
+from utils.prompts import JUDGE_PROMPT
 
 def do_sample(
     model: PreTrainedModel, 

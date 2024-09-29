@@ -1,7 +1,7 @@
-device: str = "cuda"
-train_seed: int = 1
-model_name: str = "IlyaGusev/saiga_llama3_8b"
-tokenizer_name: str = "IlyaGusev/saiga_llama3_8b"
+device: "cuda"
+train_seed: 1
+model_name: "IlyaGusev/saiga_llama3_8b"
+tokenizer_name: "IlyaGusev/saiga_llama3_8b"
 peft_config:
   target_modules:
     - "q_proj"
@@ -9,28 +9,28 @@ peft_config:
     - "v_proj"
     - "o_proj"
     - "gate_proj"
-  lora_dropout: float = 0.5
-  alpha: int = 16
-  r: int = 16
+  lora_dropout: 0.5
+  alpha: 16
+  r: 16
 dpo:
-  learning_rate: float = 5e-5
-  batch_size: int = 4
-  grad_accum: int = 4
-  warmup_steps: int = 50
-  epochs: int = 1
-  scheduler: str = "cosine"
-  optim: str = "adam"
-  max_seq_length: int = 1024
-  max_prompt_length: int = 1024
-output_dir: str = "."
+  learning_rate: 5e-5
+  batch_size: 4
+  grad_accum: 4
+  warmup_steps: 50
+  epochs: 1
+  scheduler: "cosine"
+  optim: "adam"
+  max_seq_length: 1024
+  max_prompt_length: 1024
+output_dir: "."
 sft:
-  learning_rate: float = 5e-5
-  batch_size: int = 4
-  grad_accum: int = 4
-  warmup_steps: int = 30
-  weight_decay: float = 0.001
-  epochs: int = 1
-  scheduler: str = "cosine"
-  optim: str = "adam"
-  max_seq_length: int = 1024
-iteration: int = 3
+  learning_rate: 5e-5
+  batch_size: 4
+  grad_accum: 4
+  warmup_steps: 30
+  weight_decay: 0.001
+  epochs: 1
+  scheduler: "cosine"
+  optim: "adam"
+  max_seq_length: 1024
+iteration: 3

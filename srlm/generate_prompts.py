@@ -5,7 +5,7 @@ sys.path.insert(0, os.path.abspath("prompts"))
 from typing import Dict, List, Any
 from datasets import Dataset
 from transformers import PreTrainedModel, PreTrainedTokenizer, TextStreamer
-from prompts import SYSTEM_PROMPT
+from utils.prompts import SYSTEM_PROMPT
 
 import numpy as np
 import re
