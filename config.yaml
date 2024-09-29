@@ -2,6 +2,7 @@ device: "cuda"
 train_seed: 1
 model_name: "IlyaGusev/saiga_llama3_8b"
 tokenizer_name: "IlyaGusev/saiga_llama3_8b"
+data_name: "OpenAssistant/oasst1"
 peft_config:
   target_modules:
     - "q_proj"
