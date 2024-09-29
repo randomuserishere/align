@@ -1,9 +1,11 @@
+import torch.nn as nn
+
 from typing import Dict, Any
 from accelerate import Accelerator
 from transformers import TrainingArguments, PreTrainedModel, PreTrainedTokenizer
 from trl import SFTTrainer
 
-class SFT:
+class SFT(nn.Module):
     def __init__(self, 
                  config: Dict[str, Any],
                  iteration: int):

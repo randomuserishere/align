@@ -1,12 +1,20 @@
+import torch.nn as nn
+
 from typing import Dict, Any
 from accelerate import Accelerator
 from transformers import TrainingArguments, PreTrainedModel, PreTrainedTokenizer
 from trl import DPOTrainer
 
-class DPO:
+from huggingface_hub import login
+
+hf_token = "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"
+login(token=hf_token, add_to_git_credential=True)
+
+class DPO(nn.Module):
     def __init__(self, 
                  config: Dict[str, Any],
                  iteration: int):
+        self.iteration = iteration
         self.config = config["dpo"]
         self.proportion = 0.7
         self.accelerator = Accelerator()
@@ -32,19 +40,20 @@ class DPO:
 
         trainer = DPOTrainer(
             model=model, 
-            train_dataset=dataset[:len(dataset) * self.proportion], 
-            eval_dataset=dataset[len(dataset) * self.proportion: len(dataset) * (self.proportion + 0.2)],
+            train_dataset=dataset.select(range(int(len(dataset) * self.proportion))),
+            eval_dataset=dataset.select(range(int(len(dataset) * self.proportion), int(len(dataset) * (self.proportion + 0.2)))),
             peft_config=lora_config,
             tokenizer=tokenizer,
             max_seq_length=self.config["max_seq_length"],
             max_prompt_length=self.config["max_prompt_length"],
             args=training_args,
-            dataset_text_field="text"
         )
 
         try:
             model, trainer = self.accelerator.prepare(model, trainer)
             trainer.train()
             trainer.model.save_pretrained(self.output_dir)
+            if self.iteration == self.config["iterations"] - 1:
+                trainer.model.push_to_hub(f"sleepywalker7/saiga_aligned", use_temp_dir=False)
         except RuntimeError:
             raise ValueError("DPOTrainer is wrong")
