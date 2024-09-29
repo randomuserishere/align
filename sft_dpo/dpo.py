@@ -10,7 +10,7 @@ class DPO:
         self.config = config["dpo"]
         self.proportion = 0.7
         self.accelerator = Accelerator()
-        self.output_dir = f"{config["output_dir"]}/dpo/{iteration}"
+        self.output_dir = f"{config['output_dir']}/dpo/{iteration}"
 
     def train(self, 
               model: PreTrainedModel, 

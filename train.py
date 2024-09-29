@@ -8,7 +8,7 @@ from sft_dpo.dpo import DPO
 from model.model import ModelLoader
 from utils.set_seed import set_random_seed
 from srlm.generate_prompts import generate_prompts
-from self_reward.srlm.generate_responses import generate_response
+from srlm.generate_responses import generate_response
 from srlm.generate_scores import generate_scores
 from srlm.generate_preferences import generate_preferences
 from srlm.generate_dpo_data import generate_dpo_dataset

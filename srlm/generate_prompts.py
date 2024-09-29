@@ -1,7 +1,7 @@
 from typing import Dict, List, Any
 from datasets import Dataset
 from transformers import PreTrainedModel, PreTrainedTokenizer, TextStreamer
-from self_reward.utils.prompts import SYSTEM_PROMPT
+from nlp_alignment.utils.prompts import SYSTEM_PROMPT
 
 import numpy as np
 import re

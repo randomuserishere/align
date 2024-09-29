@@ -10,7 +10,7 @@ class SFT:
         self.config = config["sft"]
         self.proportion = 0.7
         self.accelerator = Accelerator()
-        self.output_dir = f"{config["output_dir"]}/sft/{iteration}"
+        self.output_dir = f"{config['output_dir']}/sft/{iteration}"
 
     def train(self, 
               model: PreTrainedModel, 
