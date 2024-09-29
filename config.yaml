@@ -14,7 +14,7 @@ peft_config:
   alpha: 16
   r: 16
 dpo:
-  learning_rate: 5e-5
+  learning_rate: 5.0e-5
   batch_size: 4
   grad_accum: 4
   warmup_steps: 50
@@ -25,7 +25,7 @@ dpo:
   max_prompt_length: 1024
 output_dir: "."
 sft:
-  learning_rate: 5e-5
+  learning_rate: 5.0e-5
   batch_size: 4
   grad_accum: 4
   warmup_steps: 30
