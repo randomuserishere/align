@@ -52,8 +52,6 @@ class DPO(nn.Module):
         try:
             model, trainer = self.accelerator.prepare(model, trainer)
             trainer.train()
-            trainer.model.save_pretrained(self.output_dir)
-            if self.iteration == self.config["iterations"] - 1:
-                trainer.model.push_to_hub(f"sleepywalker7/saiga_aligned", use_temp_dir=False)
+            trainer.save_model(self.output_dir)
         except RuntimeError:
             raise ValueError("DPOTrainer is wrong")

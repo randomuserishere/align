@@ -15,7 +15,7 @@ peft_config:
   r: 16
 dpo:
   learning_rate: 5.0e-5
-  batch_size: 4
+  batch_size: 2
   grad_accum: 4
   warmup_steps: 50
   epochs: 1
@@ -26,7 +26,7 @@ dpo:
 output_dir: "."
 sft:
   learning_rate: 5.0e-5
-  batch_size: 4
+  batch_size: 2
   grad_accum: 4
   warmup_steps: 30
   weight_decay: 0.001
