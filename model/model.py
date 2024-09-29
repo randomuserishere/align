@@ -59,7 +59,7 @@ class ModelLoader:
             )
 
             self.model = prepare_model_for_kbit_training(self.model)
-            self.model = get_peft_model(self.model)
+            self.model = get_peft_model(self.model, peft_config=lora_config)
             return lora_config
         except RuntimeError:
             raise ValueError("Wrong peft coniguration")
