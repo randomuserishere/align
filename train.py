@@ -71,7 +71,7 @@ class Trainer:
 
     def train(self):
         try:
-            self.train_sft_model()
+            self.train_sft()
             for iteration in range(self.config["iterations"]):
                 self.run_iteration(iteration)
         except RuntimeError:
