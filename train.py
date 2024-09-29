@@ -82,8 +82,6 @@ if __name__ == "__main__":
     with open("config.yaml", "r") as f:
         config = yaml.load(f, Loader=yaml.SafeLoader)
     set_random_seed(config["train_seed"])
-    os.environ["WANDB_PROJECT"] = "self_rewarding_lm" 
-    os.environ["WANDB_LOG_MODEL"] = "checkpoint" 
 
     trainer = Trainer(config)
     trainer.train()

@@ -27,7 +27,6 @@ class DPO(nn.Module):
               dataset: Any):
               
         training_args = TrainingArguments(
-            report_to="wandb",
             output_dir=self.output_dir, 
             per_device_train_batch_size=self.config["batch_size"],
             gradient_accumulation_steps=self.config["grad_accum"],

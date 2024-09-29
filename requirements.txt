@@ -5,5 +5,4 @@ peft
 accelerate
 trl
 numpy
-wandb
 bitsandbytes
