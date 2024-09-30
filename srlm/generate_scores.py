@@ -34,7 +34,7 @@ def do_sample(
     
 def extract_scores(answer: str) -> int:
     try:
-        pattern = r"[Ss]core: ([0-5])"
+        pattern = r"[Оо]ценка: ([0-5])"
         matches = re.findall(pattern, answer)
         score = int(matches[0]) if matches else -1
         return score
