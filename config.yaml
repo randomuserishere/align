@@ -34,7 +34,7 @@ sft:
   scheduler: "cosine"
   optim: "paged_adamw_32bit"
   max_seq_length: 1024
-iterations: 3
+iteration: 3
 new_prompts_num: 500
 num_responses: 4
 proportion: 0.7

@@ -5,12 +5,7 @@ from accelerate import Accelerator
 from transformers import TrainingArguments, PreTrainedModel, PreTrainedTokenizer
 from trl import DPOTrainer
 
-from huggingface_hub import login
-
-hf_token = "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"
-login(token=hf_token, add_to_git_credential=True)
-
-class DPO(nn.Module):
+class DPO:
     def __init__(self, 
                  config: Dict[str, Any],
                  iteration: int):

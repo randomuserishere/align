@@ -5,7 +5,7 @@ from accelerate import Accelerator
 from transformers import TrainingArguments, PreTrainedModel, PreTrainedTokenizer
 from trl import SFTTrainer
 
-class SFT(nn.Module):
+class SFT:
     def __init__(self, 
                  config: Dict[str, Any],
                  iteration: int):
