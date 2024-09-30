@@ -55,7 +55,7 @@ def do_sample(
             num_return_sequences=1,
             top_p=0.9,
             temperature=0.6,
-            max_new_tokens=256, 
+            max_new_tokens=128, 
             streamer=streamer
         )
         output = tokenizer.batch_decode(output_ids, skip_special_tokens=True)
