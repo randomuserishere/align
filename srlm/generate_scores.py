@@ -27,7 +27,7 @@ def do_sample(
             num_return_sequences=1,
             top_p=0.9,
             temperature=0.6,
-            max_new_tokens=100,
+            max_new_tokens=600,
             streamer=streamer
         )
 
