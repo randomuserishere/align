@@ -101,15 +101,15 @@ def generate_new_prompts(
     iteration: int,
 ) -> str:
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    path = os.path.join("..", "data", config["data_file"])
-    instruction_response_dataset = pd.read_json(path, lines=True)
+    # path = os.path.join("..", "data", config["data_file"])
+    instruction_response_dataset = pd.read_json(config["data_file"], lines=True)
     new_prompts = generate(model, 
                            tokenizer, 
                            instruction_response_dataset, 
                            new_prompts_num=config["new_prompts_num"], 
                            device=device)
     new_prompts_df = pd.DataFrame(new_prompts)
-    output_dir = f"../data/{iteration}"
+    output_dir = f"{iteration}"
     os.makedirs(output_dir, exist_ok=True)
     output_path = os.path.join(output_dir, "gen_prompts.jsonl")
     if not os.path.exists(output_path):
