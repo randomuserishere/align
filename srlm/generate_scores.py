@@ -89,7 +89,7 @@ def generate_scores(
     device = "cuda" if torch.cuda.is_available() else "cpu"
     output_dir = f"../data/{iteration}"
     os.makedirs(output_dir, exist_ok=True)
-    output_path = f"{output_dir}/gen_scores.jsonl"
+    output_path = os.path.join(output_dir, "gen_scores.jsonl")
     gen_responses = pd.read_json(responses_path, lines=True)
 
     generate(

@@ -48,5 +48,5 @@ def generate_preferences(config: Dict[str, Any],
                          scores_path: str) -> str:
     output_dir = f"../data/{iteration}"
     os.makedirs(output_dir, exist_ok=True)
-    output_path = f"{output_dir}/preference_pairs.jsonl"
+    output_path = os.path.join(output_dir, "preference_pairs.jsonl")
     return generate(scores_path=scores_path, output_path=output_path)

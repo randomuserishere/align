@@ -93,7 +93,7 @@ def generate_responses(
     device = "cuda" if torch.cuda.is_available() else "cpu"
     output_dir = f"../data/{iteration}"
     os.makedirs(output_dir, exist_ok=True)
-    output_path = f"{output_dir}/gen_responses.jsonl"
+    output_path = os.path.join(output_dir, "gen_responses.jsonl")
     gen_prompts = pd.read_json(prompts_path, lines=True)
     generate(
             model,
