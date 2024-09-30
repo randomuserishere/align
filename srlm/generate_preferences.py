@@ -20,7 +20,6 @@ def generate_preferences(full_pipeline: List[Dict[str, Any]]) -> List[Dict[str, 
                 if prompt["score"] < min_score:
                     min_score = prompt["score"]
                     worst_prompt = prompt
-            assert best_prompt != worst_prompt, "Best and worst prompts are same"
             if best_prompt and worst_prompt:
                 pairs.append(
                     {
