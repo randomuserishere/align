@@ -99,7 +99,7 @@ def generate_responses(
             model,
             tokenizer,
             gen_prompts,
-            responses_to_generate=config["num_responses"],
+            num_responses=config["num_responses"],
             output_path=output_path,
             device=device
         )
