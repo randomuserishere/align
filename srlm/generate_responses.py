@@ -18,7 +18,7 @@ def trim_completion(completion: str) -> str:
     
 def extract_completion(response: str) -> str:
     try:
-        pattern = "\nmodel\n"
+        pattern = f"[/INST]"
         parts = response.split(pattern)
         if len(parts) > 1:
             return parts[-1]
@@ -35,7 +35,7 @@ def do_sample(
 ) -> str:
     try:
         prompt_sample = [{"role": "user", "content": prompt}]
-        model_prompt = tokenizer.apply_chat_template(prompt_sample, tokenize=False, add_generation_prompt=True)
+        model_prompt = tokenizer.apply_chat_template(prompt_sample, tokenize=False)
         model_inputs = tokenizer(model_prompt, return_tensors="pt").to(device)
         streamer = TextStreamer(tokenizer)
 
