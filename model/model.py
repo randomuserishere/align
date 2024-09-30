@@ -5,7 +5,7 @@ from typing import Dict, Optional, Any
 from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 from peft import LoraConfig, load_peft_weights, get_peft_model, prepare_model_for_kbit_training
 
-class ModelLoader(nn.Module):
+class ModelLoader:
     """
     Class that contains all model wrappers including tokenizer, peft
     """
