@@ -51,13 +51,16 @@ class Trainer:
                                    self.tokenizer, 
                                    self.instruction_response_dataset, 
                                    new_prompts_num=self.config["new_prompts_num"])
+        print("*" * 50)
         completed_responses = generate_response(self.model, 
                                       self.tokenizer, 
                                       prompts, 
                                       num_responses=self.config["num_responses"])
+        print("-" * 50)
         scores = generate_scores(self.model, 
                                  self.tokenizer, 
                                  completed_responses)
+        print("!" * 50)
         preferences_pairs = generate_preferences(scores)
         dpo_dataset = generate_dpo_dataset(preferences_pairs, self.tokenizer)
         dpo_trainer = DPO(self.config, iteration)
