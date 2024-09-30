@@ -3,7 +3,7 @@ import torch.nn as nn
 from typing import Dict, Any
 from accelerate import Accelerator
 from transformers import TrainingArguments, PreTrainedModel, PreTrainedTokenizer
-from trl import SFTTrainer
+from trl import SFTTrainer, SFTConfig
 
 class SFT:
     def __init__(self, 
@@ -20,7 +20,7 @@ class SFT:
               lora_config: Dict[str, Any],
               dataset: Any):
               
-        training_args = TrainingArguments(
+        training_args = SFTConfig(
             output_dir=self.output_dir, 
             per_device_train_batch_size=self.config["batch_size"],
             gradient_accumulation_steps=self.config["grad_accum"],

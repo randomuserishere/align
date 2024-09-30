@@ -35,6 +35,6 @@ sft:
   optim: "paged_adamw_32bit"
   max_seq_length: 512
 iterations: 3
-new_prompts_num: 30
-num_responses: 4
+new_prompts_num: 3
+num_responses: 2
 proportion: 0.7

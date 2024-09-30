@@ -3,7 +3,7 @@ import torch.nn as nn
 from typing import Dict, Any
 from accelerate import Accelerator
 from transformers import TrainingArguments, PreTrainedModel, PreTrainedTokenizer
-from trl import DPOTrainer
+from trl import DPOTrainer, DPOConfig
 
 class DPO:
     def __init__(self, 
@@ -21,8 +21,8 @@ class DPO:
               lora_config: Dict[str, Any],
               dataset: Any):
               
-        training_args = TrainingArguments(
-            output_dir=self.output_dir, 
+        training_args = DPOConfig(
+            output_dir=self.output_dir,
             per_device_train_batch_size=self.config["batch_size"],
             gradient_accumulation_steps=self.config["grad_accum"],
             warmup_steps=self.config["warmup_steps"], 
