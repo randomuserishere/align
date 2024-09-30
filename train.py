@@ -49,8 +49,8 @@ class Trainer:
         )
         prompts_path = generate_new_prompts(self.model, 
                                    self.tokenizer, 
-                                   self.instruction_response_dataset, 
-                                   new_prompts_num=self.config["new_prompts_num"])
+                                   self.config, 
+                                   iteration)
         print("*" * 50)
         responses_path = generate_responses(self.model, 
                                       self.tokenizer, 
