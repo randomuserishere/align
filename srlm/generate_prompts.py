@@ -82,7 +82,7 @@ def generate_prompts(
                     prompt_id = str(uuid.uuid4())
                     new_prompts.append(
                         {
-                            "id": prompt_id, 
+                            "prompt_id": prompt_id, 
                             "prompt": prompt, 
                             "source": "generated"
                         }
