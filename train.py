@@ -62,6 +62,7 @@ class Trainer:
                                  completed_responses)
         print("!" * 50)
         preferences_pairs = generate_preferences(scores)
+        print(len(preferences_pairs))
         dpo_dataset = generate_dpo_dataset(preferences_pairs, self.tokenizer, seed=config["train_seed"])
         print(len(dpo_dataset))
         dpo_trainer = DPO(self.config, iteration)
