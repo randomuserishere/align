@@ -1,5 +1,5 @@
 from typing import List, Dict, Any
-from datasets import Dataset
+from datasets import Dataset, load_dataset
 
 def get_prompt(example: Dict[str, Any], tokenizer: Any) -> Dict[str, Any]:
     try:
@@ -12,9 +12,10 @@ def get_prompt(example: Dict[str, Any], tokenizer: Any) -> Dict[str, Any]:
     except RuntimeError:
         raise ValueError("Wrong conversion triplets of dpo to dialog pipeline")
     
-def generate_dpo_dataset(preferences_pairs: List[Dict[str, Any]], tokenizer: Any, seed: int) -> Dataset:
+def generate_dpo_dataset(preferences_path: str, tokenizer: Any, config: Dict[str, Any]) -> Dataset:
     try:
-        dataset = Dataset.from_list(preferences_pairs).shuffle(seed=seed)
+        dataset = load_dataset("json", data_files={"train": str(preferences_path)})
+        dataset = dataset["train"].shuffle(seed=config["train_seed"])
         dataset = dataset.map(lambda data: get_prompt(data, tokenizer))
         return dataset
     except RuntimeError:

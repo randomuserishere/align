@@ -1,12 +1,18 @@
+import json
+import pandas as pd
+import os
+
 from typing import List, Dict, Any
 from collections import defaultdict
 
-def generate_preferences(full_pipeline: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+def generate(scores_path: str, output_path: str) -> str:
     try:
         prompts: Dict[str, List[Dict[str, Any]]] = defaultdict(list)
-        for pipeline in full_pipeline:
-            prompt_id = pipeline["prompt_id"]
-            prompts[prompt_id].append(pipeline)
+        with open(scores_path, "r") as f:
+            for pipeline in f:
+                data = json.loads(pipeline)
+                prompt_id = data["prompt_id"]
+                prompts[prompt_id].append(pipeline)
 
         pairs: List[Dict[str, Any]] = []
 
@@ -31,7 +37,16 @@ def generate_preferences(full_pipeline: List[Dict[str, Any]]) -> List[Dict[str, 
                         "score_rejected": worst_prompt["score"]
                     }
                 )
-        return pairs
+        df_pairs = pd.DataFrame(pairs)
+        df_pairs.to_json(output_path, lines=True, orient="records")
+        return output_path
     except RuntimeError:
         raise ValueError("Smth wrong with pairs construction for DPO")
     
+def generate_preferences(config: Dict[str, Any], 
+                         iteration: int, 
+                         scores_path: str) -> str:
+    output_dir = f"../data/{iteration}"
+    os.makedirs(output_dir, exist_ok=True)
+    output_path = f"{output_dir}/preference_pairs.jsonl"
+    return generate(scores_path=scores_path, output_path=output_path)

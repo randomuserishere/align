@@ -1,18 +1,22 @@
+import re
+import pandas as pd
+import torch
+import os
+
 from typing import Dict, List, Any
 from transformers import PreTrainedModel, PreTrainedTokenizer, TextStreamer
-
-import re
 from utils.prompts import JUDGE_PROMPT
 
 def do_sample(
     model: PreTrainedModel, 
     tokenizer: PreTrainedTokenizer, 
-    prompt: str
+    prompt: str, 
+    device: str = "cuda"
 ) -> str:
     try:
         prompt_sample = [{"role": "user", "content": prompt}]
         model_prompt = tokenizer.apply_chat_template(prompt_sample, tokenize=False)
-        model_inputs = tokenizer(model_prompt, return_tensors="pt")
+        model_inputs = tokenizer(model_prompt, return_tensors="pt").to(device)
 
         streamer = TextStreamer(tokenizer)
 
@@ -23,7 +27,7 @@ def do_sample(
             num_return_sequences=1,
             top_p=0.9,
             temperature=0.6,
-            max_new_tokens=300,
+            max_new_tokens=100,
             streamer=streamer
         )
 
@@ -41,14 +45,16 @@ def extract_scores(answer: str) -> int:
     except RuntimeError:
         raise ValueError("Wrong extracting scores")
     
-def generate_scores(
+def generate(
         model: PreTrainedModel, 
         tokenizer: PreTrainedTokenizer, 
-        prompt_completion: List[Dict[str, Any]]
-) -> List[Dict[str, Any]]:
+        gen_resposes: pd.DataFrame, 
+        output_path: str, 
+        device: str = "cuda"
+) -> None:
     try:
         full_pipeline = []
-        for dialog in prompt_completion:
+        for _, dialog in gen_resposes.iterrows():
             prompt = dialog["prompt"]
             prompt_id = dialog["prompt_id"]
             completion = dialog["completion"]
@@ -57,7 +63,7 @@ def generate_scores(
                 prompt=prompt, response=completion
             )
 
-            answer = do_sample(model, tokenizer, formatted_prompt)
+            answer = do_sample(model, tokenizer, formatted_prompt, device)
             score = extract_scores(answer)
             full_pipeline.append(
                 {
@@ -68,6 +74,29 @@ def generate_scores(
                     "reason": answer
                 }
             )
-            return full_pipeline
+            df_results = pd.DataFrame(full_pipeline)
+            df_results.to_json(output_path, orient="records", lines=True)
     except RuntimeError:
         raise ValueError("Wrong in full pipeline generation")
+    
+def generate_scores(
+    model: PreTrainedModel,
+    tokenizer: PreTrainedTokenizer,
+    config: Dict[str, Any],
+    iteration: int,
+    responses_path: str,
+) -> str:
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    output_dir = f"../data/{iteration}"
+    os.makedirs(output_dir, exist_ok=True)
+    output_path = f"{output_dir}/gen_scores.jsonl"
+    gen_responses = pd.read_json(responses_path, lines=True)
+
+    generate(
+            model=model,
+            tokenizer=tokenizer,
+            gen_respones=gen_responses,
+            output_path=output_path,
+            device=device
+        )
+    return output_path

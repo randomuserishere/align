@@ -2,20 +2,21 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath("prompts"))
 
+import numpy as np
+import pandas as pd
+import re
+import uuid
+import torch
+
 from typing import Dict, List, Any
 from datasets import Dataset
 from transformers import PreTrainedModel, PreTrainedTokenizer, TextStreamer
 from utils.prompts import SYSTEM_PROMPT
 
-import numpy as np
-import re
-import uuid
-
-def get_random_prompts(instruction_response_dataset: Dataset, 
-                       num_prompts: int = 6) -> List[str]:
+def get_random_prompts(instruction_response_dataset: pd.DataFrame, 
+                       num_prompts: int = 5) -> List[str]:
     try:
-        indexes = np.random.choice(np.arange(len(instruction_response_dataset)), size=num_prompts)
-        return instruction_response_dataset[indexes]["instruction"]
+        return instruction_response_dataset.sample(n=num_prompts)["instruction"].tolist()
     except RuntimeError:
         raise ValueError("Random prompts from data are wrong")
     
@@ -43,10 +44,11 @@ def do_sample(
         model: PreTrainedModel, 
         tokenizer: PreTrainedTokenizer, 
         task_prompts: List[str], 
+        device: str = "cuda"
 ) -> str:
     try:
         prompt = generate_prompt(task_prompts)
-        model_input = tokenizer(prompt, return_tensors="pt")
+        model_input = tokenizer(prompt, return_tensors="pt").to(device)
         streamer = TextStreamer(tokenizer)
         output_ids = model.generate(
             **model_input,
@@ -63,18 +65,19 @@ def do_sample(
     except RuntimeError:
         raise ValueError("Wrong prompt by model generation")
     
-def generate_prompts(
+def generate(
         model: PreTrainedModel, 
         tokenizer: PreTrainedTokenizer, 
-        instruction_response_dataset: Dataset, 
-        new_prompts_num: int
+        instruction_response_dataset: pd.DataFrame, 
+        new_prompts_num: int, 
+        device: str = "cuda"
 ) -> List[Dict[str, Any]]:
     try:
         uniq_prompts = set()
         new_prompts = []
         while len(uniq_prompts) < new_prompts_num:
             random_prompts = get_random_prompts(instruction_response_dataset)
-            answer = do_sample(model, tokenizer, random_prompts)
+            answer = do_sample(model, tokenizer, random_prompts, device)
             prompts = extract_prompt(answer)
             for prompt in prompts:
                 if prompt not in uniq_prompts:
@@ -90,3 +93,25 @@ def generate_prompts(
         return new_prompts
     except RuntimeError:
         raise ValueError("Wrong prompt generation")
+    
+def generate_new_prompts(
+    model: PreTrainedModel,
+    tokenizer: PreTrainedTokenizer,
+    config: Dict[str, Any],
+    iteration: int,
+) -> str:
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    instruction_response_dataset = pd.read_json(f"../data/{config["data_file"]}", lines=True)
+    new_prompts = generate(model, 
+                           tokenizer, 
+                           instruction_response_dataset, 
+                           new_prompts_num=config["new_prompts_num"], 
+                           device=device)
+    new_prompts_df = pd.DataFrame(new_prompts)
+    output_dir = f"../data/{iteration}"
+    os.makedirs(output_dir, exist_ok=True)
+    output_path = f"{output_dir}/gen_prompts.jsonl"
+    if not os.path.exists(output_path):
+        open(output_path, "w").close()
+    new_prompts_df.to_json(output_path, orient="records", lines=True)
+    return output_path

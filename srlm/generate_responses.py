@@ -1,3 +1,7 @@
+import os
+import pandas as pd
+import torch
+
 from typing import Dict, List, Any
 from transformers import PreTrainedModel, PreTrainedTokenizer, TextStreamer
 
@@ -26,12 +30,13 @@ def extract_completion(response: str) -> str:
 def do_sample(
         model: PreTrainedModel, 
         tokenizer: PreTrainedTokenizer, 
-        prompt: str
+        prompt: str, 
+        device: str = "cuda"
 ) -> str:
     try:
         prompt_sample = [{"role": "user", "content": prompt}]
         model_prompt = tokenizer.apply_chat_template(prompt_sample, tokenize=False, add_generation_prompt=True)
-        model_inputs = tokenizer(model_prompt, return_tensors="pt")
+        model_inputs = tokenizer(model_prompt, return_tensors="pt").to(device)
         streamer = TextStreamer(tokenizer)
 
         output_ids = model.generate(
@@ -49,19 +54,21 @@ def do_sample(
     except RuntimeError:
         raise ValueError("Wrong response generating")
     
-def generate_response(
+def generate(
         model: PreTrainedModel, 
         tokenizer: PreTrainedTokenizer,
-        prompts: List[Dict[str, Any]],
-        num_responses: int
+        prompts: pd.DataFrame,
+        num_responses: int, 
+        output_path: str, 
+        device: str = "cuda"
 ) -> List[Dict[str, Any]]:
     try:
         completed_responses = []
-        for prompt_pack in prompts:
+        for _, prompt_pack in prompts.iterrows():
             prompt = prompt_pack["prompt"]
             prompt_id = prompt_pack["prompt_id"]
             for _ in range(num_responses):
-                response = do_sample(model, tokenizer, prompt)
+                response = do_sample(model, tokenizer, prompt, device)
                 completion = extract_completion(response)
                 completion = trim_completion(completion)
                 completed_responses.append(
@@ -71,6 +78,29 @@ def generate_response(
                         "completion": completion
                     }
                 )
-        return completed_responses
+                df_completions = pd.DataFrame(completed_responses)
+                df_completions.to_json(output_path, orient="records", lines=True)
     except RuntimeError:
         raise ValueError("Smth is wrong with completing responses")
+    
+def generate_responses(
+    model: PreTrainedModel,
+    tokenizer: PreTrainedTokenizer,
+    config: Dict[str, Any],
+    iteration: int,
+    prompts_path: str
+) -> str:
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    output_dir = f"../data/{iteration}"
+    os.makedirs(output_dir, exist_ok=True)
+    output_path = f"{output_dir}/gen_responses.jsonl"
+    gen_prompts = pd.read_json(prompts_path, lines=True)
+    generate(
+            model,
+            tokenizer,
+            gen_prompts,
+            responses_to_generate=config["num_responses"],
+            output_path=output_path,
+            device=device
+        )
+    return output_path
