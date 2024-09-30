@@ -48,13 +48,13 @@ def extract_scores(answer: str) -> int:
 def generate(
         model: PreTrainedModel, 
         tokenizer: PreTrainedTokenizer, 
-        gen_resposes: pd.DataFrame, 
+        gen_responses: pd.DataFrame, 
         output_path: str, 
         device: str = "cuda"
 ) -> None:
     try:
         full_pipeline = []
-        for _, dialog in gen_resposes.iterrows():
+        for _, dialog in gen_responses.iterrows():
             prompt = dialog["prompt"]
             prompt_id = dialog["prompt_id"]
             completion = dialog["completion"]
@@ -95,7 +95,7 @@ def generate_scores(
     generate(
             model=model,
             tokenizer=tokenizer,
-            gen_respones=gen_responses,
+            gen_responses=gen_responses,
             output_path=output_path,
             device=device
         )
