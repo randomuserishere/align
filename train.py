@@ -17,7 +17,7 @@ from data.dataset import load_oasst_data
 class Trainer:
     def __init__(self, config: Dict[str, Any]):
         self.config = config
-        self.sft_adapther_path = None
+        self.sft_adapter_path = None
         self.dpo_adapter_path = None
 
     def train_sft(self):
@@ -27,7 +27,7 @@ class Trainer:
         )
         self.instruction_response_dataset = load_oasst_data(self.config, self.tokenizer)
         sft = SFT(config=self.config, iteration=0)
-        self.sft_adapther_path = sft.output_dir
+        self.sft_adapter_path = sft.output_dir
         sft = sft.train(
             self.model, 
             self.tokenizer, 
@@ -35,7 +35,7 @@ class Trainer:
             self.instruction_response_dataset
         )
 
-    def run_iteration(self, iteration: int, seed: int):
+    def run_iteration(self, iteration: int):
         if iteration == 0:
             self.model_loader = ModelLoader(
                 self.config, adapter=True, adapter_path=self.sft_adapter_path

@@ -26,9 +26,11 @@ def load_oasst_data(config: Dict[str, Any], tokenizer: Any) -> List[Dict[str, An
         if message["parent_id"] is None:
             organized_data[message["message_id"]] = message["text"]
 
+    used_response = set()
     instruction_response_dataset = []
     for message in oasst_dataset:
-        if message["parent_id"] in organized_data:
+        if message["parent_id"] in organized_data and message["parent_id"] not in used_response:
+            used_response.add(message["parent_id"])
             instruction_response_dataset.append(
                 {
                     "message_id": message["parent_id"], 

@@ -51,6 +51,6 @@ class DPO(nn.Module):
         try:
             model, trainer = self.accelerator.prepare(model, trainer)
             trainer.train()
-            trainer.save_model(self.output_dir)
+            trainer.model.save_pretrained(self.output_dir)
         except RuntimeError:
             raise ValueError("DPOTrainer is wrong")

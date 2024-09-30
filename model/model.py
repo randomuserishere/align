@@ -1,22 +1,23 @@
 import torch
+import torch.nn as nn
 
 from typing import Dict, Optional, Any
 from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 from peft import LoraConfig, load_peft_weights, get_peft_model, prepare_model_for_kbit_training
 
-class ModelLoader:
+class ModelLoader(nn.Module):
     """
     Class that contains all model wrappers including tokenizer, peft
     """
     def __init__(self, 
                  config: Dict[str, Any], 
                  adapter: bool = False,
-                 adapther_path: Optional[str] = None):
+                 adapter_path: Optional[str] = None):
         self.model_name = config["model_name"]
         self.tokenizer_name = config["tokenizer_name"]
         self.peft_config = config["peft_config"]
         self.adapter = adapter
-        self.adapter_path = adapther_path
+        self.adapter_path = adapter_path
         self.tokenizer = self.load_tokenizer()
         self.model = self.load_model()
         self.lora_config = self.load_lora_config()
@@ -43,7 +44,8 @@ class ModelLoader:
                                                          device_map="auto")
             if self.adapter:
                 lora_weights = load_peft_weights(self.adapter_path)
-                model.load_state_dict(lora_weights)
+                _ = model.load_state_dict(lora_weights, strict=False)
+            model.config.pretraining_tp = 1
             return model
         except RuntimeError:
             raise ValueError("Wrong model")
