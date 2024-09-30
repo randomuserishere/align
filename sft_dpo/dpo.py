@@ -38,7 +38,7 @@ class DPO:
             eval_dataset=dataset.select(range(int(len(dataset) * self.proportion), int(len(dataset) * (self.proportion + 0.2)))),
             peft_config=lora_config,
             tokenizer=tokenizer,
-            max_seq_length=self.config["max_seq_length"],
+            max_length=self.config["max_seq_length"],
             max_prompt_length=self.config["max_prompt_length"],
             args=training_args,
         )
