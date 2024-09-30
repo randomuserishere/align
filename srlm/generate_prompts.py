@@ -101,7 +101,7 @@ def generate_new_prompts(
     iteration: int,
 ) -> str:
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    instruction_response_dataset = pd.read_json(f"../data/{config["data_file"]}", lines=True)
+    instruction_response_dataset = pd.read_json(f"../data/{config['data_file']}", lines=True)
     new_prompts = generate(model, 
                            tokenizer, 
                            instruction_response_dataset, 
