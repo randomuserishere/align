@@ -7,8 +7,8 @@ from sft_dpo.sft import SFT
 from sft_dpo.dpo import DPO
 from model.model import ModelLoader
 from utils.set_seed import set_random_seed
-from srlm.generate_prompts import generate_prompts
-from srlm.generate_responses import generate_response
+from srlm.generate_prompts import generate_new_prompts
+from srlm.generate_responses import generate_responses
 from srlm.generate_scores import generate_scores
 from srlm.generate_preferences import generate_preferences
 from srlm.generate_dpo_data import generate_dpo_dataset
@@ -47,24 +47,28 @@ class Trainer:
         self.model, self.tokenizer, self.lora_config = (
             self.model_loader.model, self.model_loader.tokenizer, self.model_loader.lora_config
         )
-        prompts = generate_prompts(self.model, 
+        prompts_path = generate_new_prompts(self.model, 
                                    self.tokenizer, 
                                    self.instruction_response_dataset, 
                                    new_prompts_num=self.config["new_prompts_num"])
         print("*" * 50)
-        completed_responses = generate_response(self.model, 
+        responses_path = generate_responses(self.model, 
                                       self.tokenizer, 
-                                      prompts, 
-                                      num_responses=self.config["num_responses"])
+                                      self.config,
+                                      iteration,
+                                      prompts_path)
         print("-" * 50)
-        scores = generate_scores(self.model, 
-                                 self.tokenizer, 
-                                 completed_responses)
+        scores_path = generate_scores(self.model, 
+                                 self.tokenizer,
+                                 self.config, 
+                                 iteration,
+                                 responses_path)
         print("!" * 50)
-        preferences_pairs = generate_preferences(scores)
-        print(len(preferences_pairs))
-        dpo_dataset = generate_dpo_dataset(preferences_pairs, self.tokenizer, seed=config["train_seed"])
+        preferences_path = generate_preferences(self.config, iteration, scores_path)
+        dpo_dataset = generate_dpo_dataset(preferences_path, self.tokenizer)
+        print("DPO DATASET LEN")
         print(len(dpo_dataset))
+        print("DPO DATASET LEN")
         dpo_trainer = DPO(self.config, iteration)
         self.dpo_adapter_path = dpo_trainer.output_dir
         dpo_trainer = dpo_trainer.train(

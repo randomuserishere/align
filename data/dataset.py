@@ -3,6 +3,7 @@ from collections import defaultdict
 from datasets import load_dataset, Dataset
 
 import os
+import json
 
 def chat_template(tokenizer: Any, x: Dict[str, str]) -> Dataset:
     try:
@@ -38,6 +39,8 @@ def load_oasst_data(config: Dict[str, Any], tokenizer: Any) -> List[Dict[str, An
                     "response": message["text"]
                 }
             )
+    with open(f"{config["data_file"]}", "w") as f:
+         json.dump(instruction_response_dataset, f)
 
     instruction_response_dataset = Dataset.from_list(instruction_response_dataset).map(lambda x: chat_template(tokenizer, x))
     return instruction_response_dataset
