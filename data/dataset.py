@@ -39,8 +39,8 @@ def load_oasst_data(config: Dict[str, Any], tokenizer: Any) -> Dataset:
                     "response": message["text"]
                 }
             )
-    with open(f"{config['data_file']}", "w") as f:
-         json.dump(instruction_response_dataset, f)
 
-    instruction_response_dataset = Dataset.from_list(instruction_response_dataset).map(lambda x: chat_template(tokenizer, x))
+    instruction_response_dataset = Dataset.from_list(instruction_response_dataset)
+    instruction_response_dataset.to_json(config["data_file"], orient="records", lines=True)
+    instruction_response_dataset = instruction_response_dataset.map(lambda x: chat_template(tokenizer, x))
     return instruction_response_dataset
