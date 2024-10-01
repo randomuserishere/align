@@ -14,7 +14,7 @@ from transformers import PreTrainedModel, PreTrainedTokenizer, TextStreamer
 from utils.prompts import SYSTEM_PROMPT
 
 def get_random_prompts(instruction_response_dataset: pd.DataFrame, 
-                       num_prompts: int = 5) -> List[str]:
+                       num_prompts: int = 2) -> List[str]:
     try:
         return instruction_response_dataset.sample(n=num_prompts)["instruction"].tolist()
     except RuntimeError:
