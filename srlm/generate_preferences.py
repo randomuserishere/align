@@ -42,7 +42,7 @@ def generate(scores_path: str, output_path: str) -> str:
                     }
                 )
         df_pairs = pd.DataFrame(pairs)
-        df_pairs.to_json(output_path, lines=True, orient="records")
+        df_pairs.to_json(output_path, lines=True, orient="records", force_ascii=False)
         return output_path
     except RuntimeError:
         raise ValueError("Smth wrong with pairs construction for DPO")

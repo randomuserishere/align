@@ -75,7 +75,7 @@ def generate(
                 }
             )
             df_results = pd.DataFrame(full_pipeline)
-            df_results.to_json(output_path, orient="records", lines=True)
+            df_results.to_json(output_path, orient="records", lines=True, force_ascii=False)
     except RuntimeError:
         raise ValueError("Wrong in full pipeline generation")
     

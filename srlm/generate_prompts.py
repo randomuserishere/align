@@ -114,5 +114,5 @@ def generate_new_prompts(
     output_path = os.path.join(output_dir, "gen_prompts.jsonl")
     if not os.path.exists(output_path):
         open(output_path, "w").close()
-    new_prompts_df.to_json(output_path, orient="records", lines=True)
+    new_prompts_df.to_json(output_path, orient="records", lines=True, force_ascii=False)
     return output_path
