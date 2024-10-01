@@ -5,6 +5,8 @@ import torch
 from typing import Dict, List, Any
 from transformers import PreTrainedModel, PreTrainedTokenizer, TextStreamer
 
+from utils.prompts import RESPONSE_PROMPT
+
 def trim_completion(completion: str) -> str:
     try:
         if "\n" in completion:
@@ -18,7 +20,7 @@ def trim_completion(completion: str) -> str:
     
 def extract_completion(response: str) -> str:
     try:
-        pattern = f"[/INST]"
+        pattern = "assistant\n\n"
         parts = response.split(pattern)
         if len(parts) > 1:
             return parts[-1]
@@ -31,11 +33,12 @@ def do_sample(
         model: PreTrainedModel, 
         tokenizer: PreTrainedTokenizer, 
         prompt: str, 
-        device: str = "cuda"
+        device: str = "cuda", 
+        generate_toxic: int = 0
 ) -> str:
     try:
-        prompt_sample = [{"role": "user", "content": prompt}]
-        model_prompt = tokenizer.apply_chat_template(prompt_sample, tokenize=False)
+        prompt_sample = [{"role": "user", "content": prompt}] if generate_toxic % 2 else [{"role": "system", "content": RESPONSE_PROMPT}, {"role": "user", "content": prompt}]
+        model_prompt = tokenizer.apply_chat_template(prompt_sample, tokenize=False, add_generation_prompt=True)
         model_inputs = tokenizer(model_prompt, return_tensors="pt").to(device)
         streamer = TextStreamer(tokenizer)
 
@@ -67,8 +70,9 @@ def generate(
         for _, prompt_pack in prompts.iterrows():
             prompt = prompt_pack["prompt"]
             prompt_id = prompt_pack["prompt_id"]
+            generate_toxic = 0
             for _ in range(num_responses):
-                response = do_sample(model, tokenizer, prompt, device)
+                response = do_sample(model, tokenizer, prompt, device, generate_toxic)
                 completion = extract_completion(response)
                 completion = trim_completion(completion)
                 completed_responses.append(
@@ -80,6 +84,7 @@ def generate(
                 )
                 df_completions = pd.DataFrame(completed_responses)
                 df_completions.to_json(output_path, orient="records", lines=True)
+                generate_toxic += 1
     except RuntimeError:
         raise ValueError("Smth is wrong with completing responses")
     

@@ -1,7 +1,7 @@
 device: "cuda"
 train_seed: 1
-model_name: "mistralai/Mistral-7B-Instruct-v0.1"
-tokenizer_name: "mistralai/Mistral-7B-Instruct-v0.1"
+model_name: "IlyaGusev/saiga_llama3_8b"
+tokenizer_name: "IlyaGusev/saiga_llama3_8b"
 data_name: "OpenAssistant/oasst1"
 peft_config:
   target_modules:
@@ -35,7 +35,7 @@ sft:
   optim: "paged_adamw_32bit"
   max_seq_length: 512
 iterations: 3
-new_prompts_num: 1
+new_prompts_num: 2
 num_responses: 2
 proportion: 0.7
 data_file: "data.jsonl"

@@ -44,4 +44,3 @@ def load_oasst_data(config: Dict[str, Any], tokenizer: Any) -> Dataset:
     instruction_response_dataset.to_json(config["data_file"], orient="records", lines=True)
     instruction_response_dataset = instruction_response_dataset.map(lambda x: chat_template(tokenizer, x))
     return instruction_response_dataset
-###
