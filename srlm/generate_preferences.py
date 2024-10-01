@@ -21,6 +21,7 @@ def generate(scores_path: str, output_path: str) -> str:
             best_prompt, worst_prompt = None, None
             max_score, min_score = float("-inf"), float("inf")
             for prompt in pipeline:
+                print(prompt)
                 print('.................................')
                 print(prompt["score"])
                 if prompt["score"] > max_score:
