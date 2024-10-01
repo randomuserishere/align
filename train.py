@@ -65,7 +65,7 @@ class Trainer:
                                  responses_path)
         print("!" * 50)
         preferences_path = generate_preferences(self.config, iteration, scores_path)
-        dpo_dataset = generate_dpo_dataset(preferences_path, self.tokenizer)
+        dpo_dataset = generate_dpo_dataset(preferences_path, self.tokenizer, self.config)
         print("DPO DATASET LEN")
         print(len(dpo_dataset))
         print("DPO DATASET LEN")
