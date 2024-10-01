@@ -12,7 +12,7 @@ def generate(scores_path: str, output_path: str) -> str:
             for pipeline in f:
                 data = json.loads(pipeline)
                 prompt_id = data["prompt_id"]
-                prompts[prompt_id].append(pipeline)
+                prompts[prompt_id].append(data)
 
         pairs: List[Dict[str, Any]] = []
 
