@@ -17,6 +17,7 @@ def generate(scores_path: str, output_path: str) -> str:
         pairs: List[Dict[str, Any]] = []
 
         for prompt_id, pipeline in prompts.items():
+            print(f"PROMPT + PIPELINE - {pipeline}")
             best_prompt, worst_prompt = None, None
             max_score, min_score = float("-inf"), float("inf")
             for prompt in pipeline:
