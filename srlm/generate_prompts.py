@@ -9,7 +9,6 @@ import uuid
 import torch
 
 from typing import Dict, List, Any
-from datasets import Dataset
 from transformers import PreTrainedModel, PreTrainedTokenizer, TextStreamer
 from utils.prompts import SYSTEM_PROMPT
 
@@ -79,6 +78,10 @@ def generate(
         new_prompts = []
         while len(uniq_prompts) < new_prompts_num:
             random_prompts = get_random_prompts(instruction_response_dataset)
+            print("LEN OF DATASET")
+            print(len(instruction_response_dataset))
+            print("RANDOM PROMPTS")
+            print(random_prompts)
             answer = do_sample(model, tokenizer, random_prompts, device)
             prompts = extract_prompt(answer)
             for prompt in prompts:
