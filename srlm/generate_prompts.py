@@ -36,6 +36,8 @@ def extract_prompt(answer: str) -> List[str]:
         extracted_prompts = re.findall(r"<task>\|(.*?)</task>", answer, re.DOTALL)
         for prompt in extracted_prompts:
             prompts.append(prompt)
+        print("HERE ARE PROMPTS")
+        print(prompts)
         return prompts
     except RuntimeError:
         raise ValueError("Wrong prompt extracting")

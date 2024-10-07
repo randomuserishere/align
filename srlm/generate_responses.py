@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import torch
+import random
 
 from typing import Dict, List, Any
 from transformers import PreTrainedModel, PreTrainedTokenizer, TextStreamer
@@ -22,6 +23,8 @@ def extract_completion(response: str) -> str:
     try:
         pattern = "assistant\n\n"
         parts = response.split(pattern)
+        print("HERE ARE RESPONSES")
+        print(parts)
         if len(parts) > 1:
             return parts[-1]
         else:
@@ -34,10 +37,10 @@ def do_sample(
         tokenizer: PreTrainedTokenizer, 
         prompt: str, 
         device: str = "cuda", 
-        generate_toxic: int = 0
+        generate_toxic: bool = False
 ) -> str:
     try:
-        prompt_sample = [{"role": "user", "content": prompt}] if generate_toxic % 2 else [{"role": "system", "content": RESPONSE_PROMPT}, {"role": "user", "content": prompt}]
+        prompt_sample = [{"role": "user", "content": prompt}] if not generate_toxic else [{"role": "system", "content": RESPONSE_PROMPT}, {"role": "user", "content": prompt}]
         model_prompt = tokenizer.apply_chat_template(prompt_sample, tokenize=False, add_generation_prompt=True)
         model_inputs = tokenizer(model_prompt, return_tensors="pt").to(device)
         streamer = TextStreamer(tokenizer)
@@ -70,9 +73,9 @@ def generate(
         for _, prompt_pack in prompts.iterrows():
             prompt = prompt_pack["prompt"]
             prompt_id = prompt_pack["prompt_id"]
-            generate_toxic = 0
-            for _ in range(num_responses):
-                response = do_sample(model, tokenizer, prompt, device, generate_toxic)
+            generate_toxic = random.randint(0, num_responses - 1)
+            for id_response in range(num_responses):
+                response = do_sample(model, tokenizer, prompt, device, generate_toxic == id_response)
                 completion = extract_completion(response)
                 completion = trim_completion(completion)
                 completed_responses.append(
