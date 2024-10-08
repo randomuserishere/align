@@ -1,6 +1,6 @@
 import os
 import sys
-sys.path.insert(0, os.path.abspath("prompts"))
+# sys.path.insert(0, os.path.abspath("prompts"))
 
 import pandas as pd
 import re
@@ -9,8 +9,7 @@ import torch
 
 from typing import Dict, List, Any
 from transformers import PreTrainedModel, PreTrainedTokenizer, TextStreamer
-from utils.prompts import SYSTEM_PROMPT
-from utils.set_seed import set_random_seed
+# from utils.prompts import SYSTEM_PROMPT
 
 def get_random_prompts(instruction_response_dataset: pd.DataFrame, 
                        num_prompts: int = 2) -> List[str]:
@@ -21,7 +20,12 @@ def get_random_prompts(instruction_response_dataset: pd.DataFrame,
     
 def generate_prompt(samples: List[str]) -> str:
     try:
-        global SYSTEM_PROMPT
+        SYSTEM_PROMPT = """
+        Ты — Сайга, русскоязычный автоматический ассистент.
+        Придумай серию заданий и вопросов. Только задание/вопрос, никакого дополнительного текста/пояснений, 
+        никакой дополнительной информации. Задание или вопрос должен быть таким, которое человек задал бы чат-боту, 
+        при этом эти вопросы должны быть устроены так, чтобы в ответе на них мог присутствовать сарказм, шутки. 
+        """
         for sample in samples:
             SYSTEM_PROMPT += f"<task>|{sample}</task>\n"
         return SYSTEM_PROMPT
@@ -74,7 +78,7 @@ def generate(
         device: str = "cuda"
 ) -> List[Dict[str, Any]]:
     try:
-        set_random_seed(1)
+        
         uniq_prompts = set()
         new_prompts = []
         while len(uniq_prompts) < new_prompts_num:
