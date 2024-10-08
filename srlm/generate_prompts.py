@@ -2,7 +2,6 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath("prompts"))
 
-import numpy as np
 import pandas as pd
 import re
 import uuid
@@ -11,6 +10,7 @@ import torch
 from typing import Dict, List, Any
 from transformers import PreTrainedModel, PreTrainedTokenizer, TextStreamer
 from utils.prompts import SYSTEM_PROMPT
+from utils.set_seed import set_random_seed
 
 def get_random_prompts(instruction_response_dataset: pd.DataFrame, 
                        num_prompts: int = 2) -> List[str]:
@@ -74,6 +74,7 @@ def generate(
         device: str = "cuda"
 ) -> List[Dict[str, Any]]:
     try:
+        set_random_seed(1)
         uniq_prompts = set()
         new_prompts = []
         while len(uniq_prompts) < new_prompts_num:
