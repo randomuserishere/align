@@ -24,7 +24,7 @@ def extract_completion(response: str) -> str:
         pattern = "assistant\n\n"
         parts = response.split(pattern)
         print("HERE ARE RESPONSES")
-        print(parts)
+        print(parts[-1])
         if len(parts) > 1:
             return parts[-1]
         else:
@@ -74,7 +74,9 @@ def generate(
             prompt = prompt_pack["prompt"]
             prompt_id = prompt_pack["prompt_id"]
             generate_toxic = random.randint(0, num_responses - 1)
+            print(f"generate toxic - {generate_toxic}")
             for id_response in range(num_responses):
+                print(f"equality - {id_response} - {generate_toxic == id_response}")
                 response = do_sample(model, tokenizer, prompt, device, generate_toxic == id_response)
                 completion = extract_completion(response)
                 completion = trim_completion(completion)
