@@ -32,50 +32,50 @@ def generate_prompt(samples: List[str]) -> str:
     except RuntimeError:
         raise ValueError("Something is wrong in prompt generation")
     
-# def extract_prompt(answer: str) -> List[str]:
+def extract_prompt(answer: str) -> List[str]:
 
-#     prompts = []
-#     try:
-#         extracted_prompts = re.findall(r"<task>\|(.*?)</task>", answer, re.DOTALL)
-#         for prompt in extracted_prompts:
-#             prompts.append(prompt)
-#         print("HERE ARE PROMPTS")
-#         print(prompts)
-#         return prompts
-#     except RuntimeError:
-#         raise ValueError("Wrong prompt extracting")
+    prompts = []
+    try:
+        extracted_prompts = re.findall(r"<task>\|(.*?)</task>", answer, re.DOTALL)
+        for prompt in extracted_prompts:
+            prompts.append(prompt)
+        print("HERE ARE PROMPTS")
+        print(prompts)
+        return prompts
+    except RuntimeError:
+        raise ValueError("Wrong prompt extracting")
     
-# def do_sample(
-#         model: PreTrainedModel, 
-#         tokenizer: PreTrainedTokenizer, 
-#         task_prompts: List[str], 
-#         device: str = "cuda"
-# ) -> str:
-#     try:
-#         prompt = generate_prompt(task_prompts)
-#         model_input = tokenizer(prompt, return_tensors="pt").to(device)
-#         streamer = TextStreamer(tokenizer)
-#         output_ids = model.generate(
-#             **model_input,
-#             do_sample=True,
-#             pad_token_id=tokenizer.eos_token_id,
-#             num_return_sequences=1,
-#             top_p=0.9,
-#             temperature=0.6,
-#             max_new_tokens=64, 
-#             streamer=streamer
-#         )
-#         output = tokenizer.batch_decode(output_ids, skip_special_tokens=True)
-#         return output[0]
-#     except RuntimeError:
-#         raise ValueError("Wrong prompt by model generation")
+def do_sample(
+        model: PreTrainedModel, 
+        tokenizer: PreTrainedTokenizer, 
+        task_prompts: List[str], 
+        device: str = "cuda"
+) -> str:
+    try:
+        prompt = generate_prompt(task_prompts)
+        model_input = tokenizer(prompt, return_tensors="pt").to(device)
+        streamer = TextStreamer(tokenizer)
+        output_ids = model.generate(
+            **model_input,
+            do_sample=True,
+            pad_token_id=tokenizer.eos_token_id,
+            num_return_sequences=1,
+            top_p=0.9,
+            temperature=0.6,
+            max_new_tokens=64, 
+            streamer=streamer
+        )
+        output = tokenizer.batch_decode(output_ids, skip_special_tokens=True)
+        return output[0]
+    except RuntimeError:
+        raise ValueError("Wrong prompt by model generation")
     
 def generate(
-        # model: PreTrainedModel, 
-        # tokenizer: PreTrainedTokenizer, 
+        model: PreTrainedModel, 
+        tokenizer: PreTrainedTokenizer, 
         instruction_response_dataset: pd.DataFrame, 
         new_prompts_num: int, 
-        # device: str = "cuda"
+        device: str = "cuda"
 ) -> List[Dict[str, Any]]:
     try:
         
@@ -87,7 +87,6 @@ def generate(
             print(len(instruction_response_dataset))
             print("RANDOM PROMPTS")
             print(random_prompts)
-            break
             answer = do_sample(model, tokenizer, random_prompts, device)
             prompts = extract_prompt(answer)
             for prompt in prompts:
@@ -106,18 +105,19 @@ def generate(
         raise ValueError("Wrong prompt generation")
     
 def generate_new_prompts(
-    # model: PreTrainedModel,
-    # tokenizer: PreTrainedTokenizer,
+    model: PreTrainedModel,
+    tokenizer: PreTrainedTokenizer,
     config: Dict[str, Any],
-    iteration: int,
+    iteration: int
 ) -> str:
     device = "cuda" if torch.cuda.is_available() else "cpu"
     # path = os.path.join("..", "data", config["data_file"])
     instruction_response_dataset = pd.read_json(config["data_file"], lines=True)
-    new_prompts = generate(
+    new_prompts = generate(model, 
+                           tokenizer, 
                            instruction_response_dataset, 
                            new_prompts_num=config["new_prompts_num"], 
-                           )
+                           device=device)
     new_prompts_df = pd.DataFrame(new_prompts)
     output_dir = f"{iteration}"
     os.makedirs(output_dir, exist_ok=True)
