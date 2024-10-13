@@ -36,9 +36,17 @@ class Trainer:
         )
 
     def run_iteration(self, iteration: int):
-        self.model_loader = ModelLoader(
+        if iteration == 0:
+            self.model_loader = ModelLoader(
                 self.config, adapter=True, adapter_path=self.sft_adapter_path
             )
+        else:
+            self.model_loader = ModelLoader(
+                self.config, adapter=True, adapter_path=self.dpo_adapter_path
+            )
+        self.model, self.tokenizer, self.lora_config = (
+            self.model_loader.model, self.model_loader.tokenizer, self.model_loader.lora_config
+        )
         prompts_path = generate_new_prompts(self.model, 
                                    self.tokenizer, 
                                    self.config, 
@@ -74,6 +82,7 @@ class Trainer:
         try:
             self.train_sft()
             for iteration in range(self.config["iterations"]):
+                set_random_seed(config["train_seed"] + iteration)
                 self.run_iteration(iteration)
         except RuntimeError:
             raise ValueError("Training has broken")
@@ -82,7 +91,6 @@ class Trainer:
 if __name__ == "__main__":
     with open("config.yaml", "r") as f:
         config = yaml.load(f, Loader=yaml.SafeLoader)
-    set_random_seed(config["train_seed"])
 
     trainer = Trainer(config)
     trainer.train()
