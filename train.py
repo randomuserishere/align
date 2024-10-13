@@ -37,7 +37,7 @@ class Trainer:
 
     def run_iteration(self, iteration: int):
         self.model_loader = ModelLoader(
-                self.config, adapter=True, adapter_path=self.dpo_adapter_path
+                self.config, adapter=True, adapter_path=self.sft_adapter_path
             )
         self.model, self.tokenizer, self.lora_config = (
             self.model_loader.model, self.model_loader.tokenizer, self.model_loader.lora_config
