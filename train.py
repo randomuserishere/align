@@ -36,12 +36,7 @@ class Trainer:
         )
 
     def run_iteration(self, iteration: int):
-        if iteration == 0:
-            self.model_loader = ModelLoader(
-                self.config, adapter=True, adapter_path=self.sft_adapter_path
-            )
-        else:
-            self.model_loader = ModelLoader(
+        self.model_loader = ModelLoader(
                 self.config, adapter=True, adapter_path=self.dpo_adapter_path
             )
         self.model, self.tokenizer, self.lora_config = (
@@ -52,31 +47,31 @@ class Trainer:
                                    self.config, 
                                    iteration)
         print("*" * 50)
-        responses_path = generate_responses(self.model, 
-                                      self.tokenizer, 
-                                      self.config,
-                                      iteration,
-                                      prompts_path)
-        print("-" * 50)
-        scores_path = generate_scores(self.model, 
-                                 self.tokenizer,
-                                 self.config, 
-                                 iteration,
-                                 responses_path)
-        print("!" * 50)
-        preferences_path = generate_preferences(self.config, iteration, scores_path)
-        dpo_dataset = generate_dpo_dataset(preferences_path, self.tokenizer, self.config)
-        print("DPO DATASET LEN")
-        print(len(dpo_dataset))
-        print("DPO DATASET LEN")
-        dpo_trainer = DPO(self.config, iteration)
-        self.dpo_adapter_path = dpo_trainer.output_dir
-        dpo_trainer = dpo_trainer.train(
-            model=self.model, 
-            tokenizer=self.tokenizer, 
-            lora_config=self.lora_config, 
-            dataset=dpo_dataset
-        )
+        # responses_path = generate_responses(self.model, 
+        #                               self.tokenizer, 
+        #                               self.config,
+        #                               iteration,
+        #                               prompts_path)
+        # print("-" * 50)
+        # scores_path = generate_scores(self.model, 
+        #                          self.tokenizer,
+        #                          self.config, 
+        #                          iteration,
+        #                          responses_path)
+        # print("!" * 50)
+        # preferences_path = generate_preferences(self.config, iteration, scores_path)
+        # dpo_dataset = generate_dpo_dataset(preferences_path, self.tokenizer, self.config)
+        # print("DPO DATASET LEN")
+        # print(len(dpo_dataset))
+        # print("DPO DATASET LEN")
+        # dpo_trainer = DPO(self.config, iteration)
+        # self.dpo_adapter_path = dpo_trainer.output_dir
+        # dpo_trainer = dpo_trainer.train(
+        #     model=self.model, 
+        #     tokenizer=self.tokenizer, 
+        #     lora_config=self.lora_config, 
+        #     dataset=dpo_dataset
+        # )
 
     def train(self):
         try:
