@@ -6,6 +6,8 @@ import pandas as pd
 import re
 import uuid
 import torch
+import random
+import numpy as np
 
 from typing import Dict, List, Any
 from transformers import PreTrainedModel, PreTrainedTokenizer, TextStreamer
@@ -14,6 +16,9 @@ from transformers import PreTrainedModel, PreTrainedTokenizer, TextStreamer
 def get_random_prompts(instruction_response_dataset: pd.DataFrame, 
                        num_prompts: int = 2) -> List[str]:
     try:
+        a = random.randint(1, 10)
+        b = np.random.randint(1, 10)
+        print(f"Random number is {a} - {b}")
         return instruction_response_dataset.sample(n=num_prompts)["instruction"].tolist()
     except RuntimeError:
         raise ValueError("Random prompts from data are wrong")
