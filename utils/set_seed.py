@@ -7,6 +7,7 @@ import pandas as pd
 
 def set_random_seed(seed: int):
     pd.options.plotting.backend = "matplotlib"
+    pd.np.random.seed(seed)
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
