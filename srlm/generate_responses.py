@@ -89,7 +89,6 @@ def generate(
                 )
                 df_completions = pd.DataFrame(completed_responses)
                 df_completions.to_json(output_path, orient="records", lines=True, force_ascii=False)
-                generate_toxic += 1
     except RuntimeError:
         raise ValueError("Smth is wrong with completing responses")
     
