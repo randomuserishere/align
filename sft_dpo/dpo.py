@@ -2,7 +2,7 @@ import torch.nn as nn
 
 from typing import Dict, Any
 from accelerate import Accelerator
-from transformers import TrainingArguments, PreTrainedModel, PreTrainedTokenizer
+from transformers import PreTrainedModel, PreTrainedTokenizer
 from trl import DPOTrainer, DPOConfig
 
 class DPO:

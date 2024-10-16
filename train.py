@@ -1,8 +1,8 @@
 import yaml
-import os
+import torch
 
 from typing import Dict, Any
-
+from peft import AutoPeftModelForCausalLM 
 from sft_dpo.sft import SFT
 from sft_dpo.dpo import DPO
 from model.model import ModelLoader
@@ -84,6 +84,14 @@ class Trainer:
             for iteration in range(self.config["iterations"]):
                 set_random_seed(config["train_seed"] + iteration)
                 self.run_iteration(iteration)
+            dpo_model = AutoPeftModelForCausalLM.from_pretrained(
+                f"{config['output_dir']}/dpo/3",
+                torch_dtype=torch.bfloat16, 
+                load_in_4bit=True
+            )
+            merged_model = dpo_model.merge_and_unload()
+            merged_model.save_pretrained(f"{config['output_dir']}/full_model")
+            merged_model.push_to_hub(f"sleepywalker/srlm_4_iteration")
         except RuntimeError:
             raise ValueError("Training has broken")
         

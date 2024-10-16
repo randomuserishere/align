@@ -14,11 +14,8 @@ from transformers import PreTrainedModel, PreTrainedTokenizer, TextStreamer
 # from utils.prompts import SYSTEM_PROMPT
 
 def get_random_prompts(instruction_response_dataset: pd.DataFrame, 
-                       num_prompts: int = 2) -> List[str]:
+                       num_prompts: int = 4) -> List[str]:
     try:
-        a = random.randint(1, 10)
-        b = np.random.randint(1, 10)
-        print(f"Random number is {a} - {b}")
         return instruction_response_dataset.sample(n=num_prompts)["instruction"].tolist()
     except RuntimeError:
         raise ValueError("Random prompts from data are wrong")
@@ -44,8 +41,6 @@ def extract_prompt(answer: str) -> List[str]:
         extracted_prompts = re.findall(r"<task>\|(.*?)</task>", answer, re.DOTALL)
         for prompt in extracted_prompts:
             prompts.append(prompt)
-        print("HERE ARE PROMPTS")
-        print(prompts)
         return prompts
     except RuntimeError:
         raise ValueError("Wrong prompt extracting")
@@ -59,7 +54,6 @@ def do_sample(
     try:
         prompt = generate_prompt(task_prompts)
         model_input = tokenizer(prompt, return_tensors="pt").to(device)
-        streamer = TextStreamer(tokenizer)
         output_ids = model.generate(
             **model_input,
             do_sample=True,
@@ -67,8 +61,7 @@ def do_sample(
             num_return_sequences=1,
             top_p=0.9,
             temperature=0.6,
-            max_new_tokens=64, 
-            streamer=streamer
+            max_new_tokens=128, 
         )
         output = tokenizer.batch_decode(output_ids, skip_special_tokens=True)
         return output[0]
@@ -88,12 +81,10 @@ def generate(
         new_prompts = []
         while len(uniq_prompts) < new_prompts_num:
             random_prompts = get_random_prompts(instruction_response_dataset)
-            print("LEN OF DATASET")
-            print(len(instruction_response_dataset))
-            print("RANDOM PROMPTS")
-            print(random_prompts)
+            print(f"random prompts - {random_prompts}")
             answer = do_sample(model, tokenizer, random_prompts, device)
             prompts = extract_prompt(answer)
+            print(f"extracted prompts - {prompts}")
             for prompt in prompts:
                 if prompt not in uniq_prompts:
                     uniq_prompts.add(prompt)

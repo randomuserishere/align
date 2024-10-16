@@ -18,8 +18,6 @@ def do_sample(
         model_prompt = tokenizer.apply_chat_template(prompt_sample, tokenize=False)
         model_inputs = tokenizer(model_prompt, return_tensors="pt").to(device)
 
-        streamer = TextStreamer(tokenizer)
-
         generated_ids = model.generate(
             **model_inputs,
             do_sample=True,
@@ -27,8 +25,7 @@ def do_sample(
             num_return_sequences=1,
             top_p=0.9,
             temperature=0.6,
-            max_new_tokens=100,
-            streamer=streamer
+            max_new_tokens=128,
         )
 
         answer = tokenizer.batch_decode(generated_ids, skip_special_tokens=True)[0]
