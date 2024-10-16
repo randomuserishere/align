@@ -41,7 +41,6 @@ def do_sample(
         prompt_sample = [{"role": "user", "content": prompt}] if not generate_toxic else [{"role": "system", "content": RESPONSE_PROMPT}, {"role": "user", "content": prompt}]
         model_prompt = tokenizer.apply_chat_template(prompt_sample, tokenize=False, add_generation_prompt=True)
         model_inputs = tokenizer(model_prompt, return_tensors="pt").to(device)
-        streamer = TextStreamer(tokenizer)
 
         output_ids = model.generate(
             **model_inputs, 
@@ -75,7 +74,6 @@ def generate(
                 response = do_sample(model, tokenizer, prompt, device, generate_toxic == id_response)
                 completion = extract_completion(response)
                 completion = trim_completion(completion)
-                print(f"Completed response - {completion}")
                 completed_responses.append(
                     {
                         "prompt_id": prompt_id, 

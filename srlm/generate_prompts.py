@@ -81,10 +81,8 @@ def generate(
         new_prompts = []
         while len(uniq_prompts) < new_prompts_num:
             random_prompts = get_random_prompts(instruction_response_dataset)
-            print(f"random prompts - {random_prompts}")
             answer = do_sample(model, tokenizer, random_prompts, device)
             prompts = extract_prompt(answer)
-            print(f"extracted prompts - {prompts}")
             for prompt in prompts:
                 if prompt not in uniq_prompts:
                     uniq_prompts.add(prompt)
