@@ -34,7 +34,7 @@ class SFT:
 
         trainer = SFTTrainer(
             model=model, 
-            train_dataset=dataset.select(range(10)),
+            train_dataset=dataset,
             peft_config=lora_config,
             tokenizer=tokenizer,
             max_seq_length=self.config["max_seq_length"],

@@ -1,12 +1,9 @@
 import os
 import pandas as pd
 import torch
-import random
 
 from typing import Dict, List, Any
-from transformers import PreTrainedModel, PreTrainedTokenizer, TextStreamer
-
-from utils.prompts import RESPONSE_PROMPT
+from transformers import PreTrainedModel, PreTrainedTokenizer
 
 def trim_completion(completion: str) -> str:
     try:
@@ -35,10 +32,9 @@ def do_sample(
         tokenizer: PreTrainedTokenizer, 
         prompt: str, 
         device: str = "cuda", 
-        generate_toxic: bool = False
 ) -> str:
     try:
-        prompt_sample = [{"role": "user", "content": prompt}] if not generate_toxic else [{"role": "system", "content": RESPONSE_PROMPT}, {"role": "user", "content": prompt}]
+        prompt_sample = [{"role": "user", "content": prompt}]
         model_prompt = tokenizer.apply_chat_template(prompt_sample, tokenize=False, add_generation_prompt=True)
         model_inputs = tokenizer(model_prompt, return_tensors="pt").to(device)
 
@@ -69,9 +65,8 @@ def generate(
         for _, prompt_pack in prompts.iterrows():
             prompt = prompt_pack["prompt"]
             prompt_id = prompt_pack["prompt_id"]
-            generate_toxic = random.randint(0, num_responses - 1)
-            for id_response in range(num_responses):
-                response = do_sample(model, tokenizer, prompt, device, generate_toxic == id_response)
+            for _ in range(num_responses):
+                response = do_sample(model, tokenizer, prompt, device)
                 completion = extract_completion(response)
                 completion = trim_completion(completion)
                 completed_responses.append(

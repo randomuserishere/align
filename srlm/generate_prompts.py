@@ -1,17 +1,13 @@
 import os
-import sys
-# sys.path.insert(0, os.path.abspath("prompts"))
 
 import pandas as pd
 import re
 import uuid
 import torch
-import random
 import numpy as np
 
 from typing import Dict, List, Any
 from transformers import PreTrainedModel, PreTrainedTokenizer, TextStreamer
-# from utils.prompts import SYSTEM_PROMPT
 
 def get_random_prompts(instruction_response_dataset: pd.DataFrame, 
                        num_prompts: int = 4) -> List[str]:
@@ -105,7 +101,6 @@ def generate_new_prompts(
     iteration: int
 ) -> str:
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    # path = os.path.join("..", "data", config["data_file"])
     instruction_response_dataset = pd.read_json(config["data_file"], lines=True)
     new_prompts = generate(model, 
                            tokenizer, 

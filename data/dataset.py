@@ -3,7 +3,6 @@ from collections import defaultdict
 from datasets import load_dataset, Dataset
 
 import os
-import json
 
 def chat_template(tokenizer: Any, x: Dict[str, str]) -> Dataset:
     try:
@@ -34,12 +33,10 @@ def load_oasst_data(config: Dict[str, Any], tokenizer: Any) -> Dataset:
             used_response.add(message["parent_id"])
             instruction_response_dataset.append(
                 {
-                    "message_id": message["parent_id"], 
                     "instruction": organized_data[message["parent_id"]], 
                     "response": message["text"]
                 }
             )
-
     instruction_response_dataset = Dataset.from_list(instruction_response_dataset)
     instruction_response_dataset.to_json(config["data_file"], orient="records", lines=True)
     instruction_response_dataset = instruction_response_dataset.map(lambda x: chat_template(tokenizer, x))

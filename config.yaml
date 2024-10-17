@@ -35,7 +35,7 @@ sft:
   optim: "paged_adamw_32bit"
   max_seq_length: 512
 iterations: 4
-new_prompts_num: 500
-num_responses: 4
+new_prompts_num: 300
+num_responses: 3
 proportion: 0.7
 data_file: "data.jsonl"
