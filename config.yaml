@@ -21,8 +21,8 @@ dpo:
   epochs: 1
   scheduler: "cosine"
   optim: "paged_adamw_32bit"
-  max_seq_length: 1024
-  max_prompt_length: 1024
+  max_seq_length: 512
+  max_prompt_length: 512
 output_dir: "."
 sft:
   learning_rate: 5.0e-5
@@ -33,9 +33,9 @@ sft:
   epochs: 1
   scheduler: "cosine"
   optim: "paged_adamw_32bit"
-  max_seq_length: 1024
+  max_seq_length: 512
 iterations: 4
-new_prompts_num: 300
+new_prompts_num: 200
 num_responses: 3
 proportion: 0.7
 data_file: "data.jsonl"

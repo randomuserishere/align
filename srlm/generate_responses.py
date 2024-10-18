@@ -2,6 +2,7 @@ import os
 import pandas as pd
 import torch
 
+from tqdm import tqdm
 from typing import Dict, List, Any
 from transformers import PreTrainedModel, PreTrainedTokenizer
 
@@ -62,7 +63,7 @@ def generate(
 ) -> List[Dict[str, Any]]:
     try:
         completed_responses = []
-        for _, prompt_pack in prompts.iterrows():
+        for _, prompt_pack in tqdm(prompts.iterrows(), total=len(prompts), desc="Generating responses"):
             prompt = prompt_pack["prompt"]
             prompt_id = prompt_pack["prompt_id"]
             for _ in range(num_responses):
