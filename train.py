@@ -37,17 +37,22 @@ class Trainer:
         )
 
     def run_iteration(self, iteration: int):
-        if iteration == 0:
-            self.model_loader = ModelLoader(
-                self.config, adapter=True, adapter_path=self.sft_adapter_path
-            )
-        else:
-            self.model_loader = ModelLoader(
-                self.config, adapter=True, adapter_path=self.dpo_adapter_path
-            )
+        # if iteration == 0:
+        #     self.model_loader = ModelLoader(
+        #         self.config, adapter=True, adapter_path=self.sft_adapter_path
+        #     )
+        # else:
+        #     self.model_loader = ModelLoader(
+        #         self.config, adapter=True, adapter_path=self.dpo_adapter_path
+        #     )
+        # self.model, self.tokenizer, self.lora_config = (
+        #     self.model_loader.model, self.model_loader.tokenizer, self.model_loader.lora_config
+        # )
+        self.model_loader = ModelLoader(self.config)
         self.model, self.tokenizer, self.lora_config = (
             self.model_loader.model, self.model_loader.tokenizer, self.model_loader.lora_config
         )
+        self.instruction_response_dataset = load_oasst_data(self.config, self.tokenizer)
         prompts_path = generate_new_prompts(self.model, 
                                    self.tokenizer, 
                                    self.config, 
@@ -81,7 +86,7 @@ class Trainer:
 
     def train(self):
         try:
-            self.train_sft()
+            # self.train_sft()
             for iteration in tqdm(range(self.config["iterations"])):
                 set_random_seed(config["train_seed"] + iteration)
                 self.run_iteration(iteration)
