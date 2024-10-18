@@ -51,6 +51,7 @@ def do_sample(
     try:
         prompt = generate_prompt(task_prompts)
         model_input = tokenizer(prompt, return_tensors="pt").to(device)
+        streamer = TextStreamer(tokenizer)
         output_ids = model.generate(
             **model_input,
             do_sample=True,
@@ -59,6 +60,7 @@ def do_sample(
             top_p=0.9,
             temperature=0.6,
             max_new_tokens=128, 
+            streamer=streamer
         )
         output = tokenizer.batch_decode(output_ids, skip_special_tokens=True)
         return output[0]
@@ -77,6 +79,7 @@ def generate(
         new_prompts = []
         with tqdm(total=new_prompts_num - len(uniq_prompts), unit="prompts", desc="Generating prompts"):
             while len(uniq_prompts) < new_prompts_num:
+                print(f"LEN OF UNIQ IS {len(uniq_prompts)}")
                 random_prompts = get_random_prompts(instruction_response_dataset)
                 answer = do_sample(model, tokenizer, random_prompts, device)
                 prompts = extract_prompt(answer)
