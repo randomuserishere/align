@@ -81,7 +81,7 @@ class Trainer:
 
     def train(self):
         try:
-            # self.train_sft()
+            self.train_sft()
             for iteration in tqdm(range(self.config["iterations"])):
                 set_random_seed(config["train_seed"] + iteration)
                 self.run_iteration(iteration)
