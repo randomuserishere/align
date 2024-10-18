@@ -77,23 +77,22 @@ def generate(
     try:
         uniq_prompts = set()
         new_prompts = []
-        with tqdm(total=new_prompts_num - len(uniq_prompts), unit="prompts", desc="Generating prompts"):
-            while len(uniq_prompts) < new_prompts_num:
-                print(f"LEN OF UNIQ IS {len(uniq_prompts)}")
-                random_prompts = get_random_prompts(instruction_response_dataset)
-                answer = do_sample(model, tokenizer, random_prompts, device)
-                prompts = extract_prompt(answer)
-                for prompt in prompts:
-                    if prompt not in uniq_prompts:
-                        uniq_prompts.add(prompt)
-                        prompt_id = str(uuid.uuid4())
-                        new_prompts.append(
-                            {
-                                "prompt_id": prompt_id, 
-                                "prompt": prompt, 
-                                "source": "generated"
-                            }
-                        )
+        while len(uniq_prompts) < new_prompts_num:
+            print(f"LEN OF UNIQ IS {len(uniq_prompts)}")
+            random_prompts = get_random_prompts(instruction_response_dataset)
+            answer = do_sample(model, tokenizer, random_prompts, device)
+            prompts = extract_prompt(answer)
+            for prompt in prompts:
+                if prompt not in uniq_prompts:
+                    uniq_prompts.add(prompt)
+                    prompt_id = str(uuid.uuid4())
+                    new_prompts.append(
+                        {
+                            "prompt_id": prompt_id, 
+                            "prompt": prompt, 
+                            "source": "generated"
+                        }
+                    )
         return new_prompts
     except RuntimeError:
         raise ValueError("Wrong prompt generation")

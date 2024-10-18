@@ -4,7 +4,7 @@ import torch
 
 from tqdm import tqdm
 from typing import Dict, List, Any
-from transformers import PreTrainedModel, PreTrainedTokenizer
+from transformers import PreTrainedModel, PreTrainedTokenizer, TextStreamer
 
 def trim_completion(completion: str) -> str:
     try:
@@ -38,6 +38,7 @@ def do_sample(
         prompt_sample = [{"role": "user", "content": prompt}]
         model_prompt = tokenizer.apply_chat_template(prompt_sample, tokenize=False, add_generation_prompt=True)
         model_inputs = tokenizer(model_prompt, return_tensors="pt").to(device)
+        streamer = TextStreamer(tokenizer)
 
         output_ids = model.generate(
             **model_inputs, 
@@ -47,6 +48,7 @@ def do_sample(
             top_p=0.9,
             temperature=0.6,
             max_new_tokens=128,
+            streamer=streamer
         )
         response = tokenizer.batch_decode(output_ids, skip_special_tokens=True)[0]
         return response
@@ -63,7 +65,10 @@ def generate(
 ) -> List[Dict[str, Any]]:
     try:
         completed_responses = []
-        for _, prompt_pack in tqdm(prompts.iterrows(), total=len(prompts), desc="Generating responses"):
+        counter = 0
+        for _, prompt_pack in prompts.iterrows():
+            counter += 1
+            print(f"RESPONSES FOR PROMPT NUMBER {counter}")
             prompt = prompt_pack["prompt"]
             prompt_id = prompt_pack["prompt_id"]
             for _ in range(num_responses):

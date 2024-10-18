@@ -3,7 +3,7 @@ import pandas as pd
 import torch
 import os
 
-from typing import Dict, List, Any
+from typing import Dict, Any
 from transformers import PreTrainedModel, PreTrainedTokenizer, TextStreamer
 from utils.prompts import JUDGE_PROMPT
 
@@ -17,6 +17,7 @@ def do_sample(
         prompt_sample = [{"role": "user", "content": prompt}]
         model_prompt = tokenizer.apply_chat_template(prompt_sample, tokenize=False)
         model_inputs = tokenizer(model_prompt, return_tensors="pt").to(device)
+        streamer = TextStreamer(tokenizer)
 
         generated_ids = model.generate(
             **model_inputs,
@@ -26,6 +27,7 @@ def do_sample(
             top_p=0.9,
             temperature=0.6,
             max_new_tokens=128,
+            streamer=streamer
         )
 
         answer = tokenizer.batch_decode(generated_ids, skip_special_tokens=True)[0]
